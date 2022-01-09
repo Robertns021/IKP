@@ -17,5 +17,10 @@ namespace Server
 
             Console.ReadKey();
         }
+
+        /*void Connect(char* queueName)
+        {
+
+        }*/
     }
 }

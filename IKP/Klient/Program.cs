@@ -27,5 +27,6 @@ namespace Klient
             Console.WriteLine("Goodbye");
             Console.ReadKey();
         }
+        //SendMessage(char* queueName, void* message, int messageSize)
     }
 }
