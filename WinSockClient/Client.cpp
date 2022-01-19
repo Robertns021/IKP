@@ -11,80 +11,98 @@
 // Initializes WinSock2 library
 // Returns true if succeeded, false otherwise.
 bool InitializeWindowsSockets();
+void Connect(char * queueName);
+void SendMessage(char *queueName, char* message, int messageSize);
 
 int main(int argc,char* argv[])
 {
-    // Server address
-    sockaddr_in serverAddress;
-    // size of sockaddr structure    
-	int sockAddrLen = sizeof(struct sockaddr);
 	// buffer we will use to store message
     char outgoingBuffer[OUTGOING_BUFFER_SIZE];
-    // port used for communication with server
-    int serverPort = SERVER_PORT;
-	// variable used to store function return value
-	int iResult;
+	int i = 0;
+	do
+	{
+		printf("Enter message from server:\n");
+		// Read string from user into outgoing buffer
+		gets_s(outgoingBuffer, OUTGOING_BUFFER_SIZE);
+		printf("Enter queue:\n");
+		char queue[10];
+		scanf("%s", &queue);
+		/*strcat(queue, "^/");
+		strcat(outgoingBuffer, "/^");
+		strcat(outgoingBuffer, queue);*/
 
-    // Initialize windows sockets for this process
-    InitializeWindowsSockets();
-
-    // Initialize serverAddress structure
-    memset((char*)&serverAddress,0,sizeof(serverAddress));
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_addr.s_addr = inet_addr(SERVER_IP_ADDERESS);
-    serverAddress.sin_port = htons((u_short)serverPort);
-
-	// create a socket
-    SOCKET clientSocket = socket(AF_INET,      // IPv4 address famly
-								 SOCK_DGRAM,   // datagram socket
-								 IPPROTO_UDP); // UDP
-
-    // check if socket creation succeeded
-    if (clientSocket == INVALID_SOCKET)
-    {
-        printf("Creating socket failed with error: %d\n", WSAGetLastError());
-        WSACleanup();
-        return 1;
-    }
-
-	printf("Enter message from server:\n");
-
-	// Read string from user into outgoing buffer
-    gets_s(outgoingBuffer, OUTGOING_BUFFER_SIZE);
-	
-    iResult = sendto(clientSocket,
-					 outgoingBuffer,
-					 strlen(outgoingBuffer),
-					 0,
-					 (LPSOCKADDR)&serverAddress,
-					 sockAddrLen);
-
-    if (iResult == SOCKET_ERROR)
-    {
-        printf("sendto failed with error: %d\n", WSAGetLastError());
-        closesocket(clientSocket);
-        WSACleanup();
-        return 1;
-    }
+		SendMessage(queue, outgoingBuffer, strlen(outgoingBuffer));
+		printf("Continue? 1 - No");
+		scanf("%d", &i);
+	}
+	while (i != 1);
 
 	printf("Message sent to server, press any key to exit.\n");
 	_getch();
 
-    iResult = closesocket(clientSocket);
-    if (iResult == SOCKET_ERROR)
-    {
-        printf("closesocket failed with error: %d\n", WSAGetLastError());
-        return 1;
-    }
-
-    iResult = WSACleanup();
-    if (iResult == SOCKET_ERROR)
-    {
-        printf("WSACleanup failed with error: %ld\n", WSAGetLastError());
-        return 1;
-    }
-
     return 0;
+}
+
+void Connect(char * queueName)
+{
+
+}
+
+void SendMessage(char *queueName, char* message, int messageSize)
+{
+	int iResult;
+	// Server address
+	sockaddr_in serverAddress;
+	// port used for communication with server
+	int serverPort = SERVER_PORT;
+	// size of sockaddr structure    
+	int sockAddrLen = sizeof(struct sockaddr);
+
+	// Initialize windows sockets for this process
+	InitializeWindowsSockets();
+
+	// Initialize serverAddress structure
+	memset((char*)&serverAddress, 0, sizeof(serverAddress));
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_addr.s_addr = inet_addr(SERVER_IP_ADDERESS);
+	serverAddress.sin_port = htons((u_short)serverPort);
+
+	// create a socket
+	SOCKET clientSocket = socket(AF_INET,      // IPv4 address famly
+		SOCK_DGRAM,   // datagram socket
+		IPPROTO_UDP); // UDP
+	// check if socket creation succeeded
+	if (clientSocket == INVALID_SOCKET)
+	{
+		printf("Creating socket failed with error: %d\n", WSAGetLastError());
+		WSACleanup();
+	}
+
+	iResult = sendto(clientSocket,
+		message,
+		messageSize,
+		0,
+		(LPSOCKADDR)&serverAddress,
+		sockAddrLen);
+
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("sendto failed with error: %d\n", WSAGetLastError());
+		closesocket(clientSocket);
+		WSACleanup();
+	}
+
+	iResult = closesocket(clientSocket);
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("closesocket failed with error: %d\n", WSAGetLastError());
+	}
+
+	iResult = WSACleanup();
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("WSACleanup failed with error: %ld\n", WSAGetLastError());
+	}
 }
 
 bool InitializeWindowsSockets()
