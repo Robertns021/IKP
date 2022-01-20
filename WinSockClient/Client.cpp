@@ -18,36 +18,55 @@ int main(int argc,char* argv[])
 {
 	// buffer we will use to store message
     char outgoingBuffer[OUTGOING_BUFFER_SIZE];
-	int i = 0;
+	int i = 11, j = 11; //pomocne promenljive za logiku rada
+	char q[10]; //queueName
 	do
 	{
-		printf("Enter message from server:\n");
-		// Read string from user into outgoing buffer
-		gets_s(outgoingBuffer, OUTGOING_BUFFER_SIZE);
-		printf("Enter queue:\n");
-		char queue[10];
-		scanf("%s", &queue);
-		/*strcat(queue, "^/");
-		strcat(outgoingBuffer, "/^");
-		strcat(outgoingBuffer, queue);*/
+		printf("Recieve messages - 1, Send messages - 2, Exit - 3");
+		scanf("%d", &j);
 
-		SendMessage(queue, outgoingBuffer, strlen(outgoingBuffer));
-		printf("Continue? 1 - No");
-		scanf("%d", &i);
-	}
-	while (i != 1);
+		if (j == 1)
+		{
+			printf("Enter queue:\n");
+			scanf("%s", &q);
+			Connect(q);
+		}
+		else if (j == 2)
+		{
+			do
+			{
+				printf("Enter message from server:\n");
+				// Read string from user into outgoing buffer
+				gets_s(outgoingBuffer, OUTGOING_BUFFER_SIZE);
+				printf("Enter queue:\n");
+				char queue[10];
+				scanf("%s", &queue);
+				/*strcat(queue, "^/");
+				strcat(outgoingBuffer, "/^");
+				strcat(outgoingBuffer, queue);*/
 
-	printf("Message sent to server, press any key to exit.\n");
+				SendMessage(queue, outgoingBuffer, strlen(outgoingBuffer));
+				printf("Continue? No - 0");
+				scanf("%d", &i);
+			} 
+			while (i != 0);
+		}
+	} 
+	while (j != 3);
+
+	printf("Done, press any key to exit.\n");
 	_getch();
 
     return 0;
 }
 
+//Primanje svih poruka sa odabranog queue-a
 void Connect(char * queueName)
 {
 
 }
 
+//Slanje poruke na odabrani queue
 void SendMessage(char *queueName, char* message, int messageSize)
 {
 	int iResult;
