@@ -18,7 +18,7 @@ int main(int argc,char* argv[])
 {
 	// buffer we will use to store message
     char outgoingBuffer[OUTGOING_BUFFER_SIZE];
-	int i = 11, j = 11; //pomocne promenljive za logiku rada
+	int j = 11; //pomocne promenljive za logiku rada
 	char q[10]; //queueName
 	do
 	{
@@ -33,23 +33,17 @@ int main(int argc,char* argv[])
 		}
 		else if (j == 2)
 		{
-			do
-			{
-				printf("Enter message from server:\n");
-				// Read string from user into outgoing buffer
-				gets_s(outgoingBuffer, OUTGOING_BUFFER_SIZE);
-				printf("Enter queue:\n");
-				char queue[10];
-				scanf("%s", &queue);
-				/*strcat(queue, "^/");
-				strcat(outgoingBuffer, "/^");
-				strcat(outgoingBuffer, queue);*/
+			printf("Enter message from server:\n");
+			// Read string from user into outgoing buffer
+			gets_s(outgoingBuffer, OUTGOING_BUFFER_SIZE);
+			printf("Enter queue:\n");
+			char queue[10];
+			scanf("%s", &queue);
+			/*strcat(queue, "^/");
+			strcat(outgoingBuffer, "/^");
+			strcat(outgoingBuffer, queue);*/
 
-				SendMessage(queue, outgoingBuffer, strlen(outgoingBuffer));
-				printf("Continue? No - 0");
-				scanf("%d", &i);
-			} 
-			while (i != 0);
+			SendMessage(queue, outgoingBuffer, strlen(outgoingBuffer));
 		}
 	} 
 	while (j != 3);
