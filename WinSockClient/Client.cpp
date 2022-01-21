@@ -19,26 +19,31 @@ int main(int argc,char* argv[])
 	// buffer we will use to store message
     char outgoingBuffer[OUTGOING_BUFFER_SIZE];
 	int j = 11; //pomocne promenljive za logiku rada
+	char unos[5];
 	char q[10]; //queueName
 	do
 	{
-		printf("Recieve messages - 1, Send messages - 2, Exit - 3");
-		scanf("%d", &j);
+		printf("Recieve messages - 1, Send messages - 2, Exit - 3\n$?> ");
+		fgets(unos,2,stdin);
+		j = atoi(unos);
+		fflush(stdin);
 
 		if (j == 1)
 		{
-			printf("Enter queue:\n");
+			printf("Enter queue:");
 			scanf("%s", &q);
 			Connect(q);
 		}
 		else if (j == 2)
 		{
-			printf("Enter message from server:\n");
+			printf("Enter message from server: ");
 			// Read string from user into outgoing buffer
-			gets_s(outgoingBuffer, OUTGOING_BUFFER_SIZE);
-			printf("Enter queue:\n");
+			scanf("%s",outgoingBuffer);
+			fflush(stdin);
+			printf("Enter queue: ");
 			char queue[10];
-			scanf("%s", &queue);
+			scanf("%10s", queue);
+			fflush(stdin);
 			/*strcat(queue, "^/");
 			strcat(outgoingBuffer, "/^");
 			strcat(outgoingBuffer, queue);*/

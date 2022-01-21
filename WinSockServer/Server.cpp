@@ -78,7 +78,8 @@ int main(int argc,char* argv[])
     // Main server loop
     while(1)
     {
-		strcpy(accessBuffer, RecieveMessage(accessBuffer, serverSocket, iResult, sockAddrLen));
+		strcpy(accessBuffer, "-1");
+		RecieveMessage(accessBuffer, serverSocket, iResult, sockAddrLen);
 		//Slanje poruka sa servera ka klijentu
 		if (strcmp(accessBuffer, "1"))
 		{
@@ -157,6 +158,14 @@ char* RecieveMessage(char* accessBuffer, SOCKET serverSocket, int iResult, int s
 			0,
 			(LPSOCKADDR)&clientAddress,
 			&sockAddrLen);
+		char ipAddress[IP_ADDRESS_LEN];
+		// copy client ip to local char[]
+		strcpy_s(ipAddress, sizeof(ipAddress), inet_ntoa(clientAddress.sin_addr));
+		// convert port number from TCP/IP byte order to
+		// little endian byte order
+		int clientPort = ntohs((u_short)clientAddress.sin_port);
+
+		printf("Client connected from ip: %s, port: %d, sent: %s.\n", ipAddress, clientPort, accessBuffer);
 	}
 
 	if (iResult == SOCKET_ERROR)
@@ -165,14 +174,7 @@ char* RecieveMessage(char* accessBuffer, SOCKET serverSocket, int iResult, int s
 		return "0";
 	}
 
-	char ipAddress[IP_ADDRESS_LEN];
-	// copy client ip to local char[]
-	strcpy_s(ipAddress, sizeof(ipAddress), inet_ntoa(clientAddress.sin_addr));
-	// convert port number from TCP/IP byte order to
-	// little endian byte order
-	int clientPort = ntohs((u_short)clientAddress.sin_port);
-
-	printf("Client connected from ip: %s, port: %d, sent: %s.\n", ipAddress, clientPort, accessBuffer);
+	
 	return accessBuffer;
 }
 
