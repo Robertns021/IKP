@@ -1,10 +1,28 @@
-#include <winsock2.h>
 #include <stdio.h>
+#include <winsock2.h>
+
 
 #define SERVER_PORT 15000
 #define SERVER_SLEEP_TIME 50
 #define ACCESS_BUFFER_SIZE 1024
 #define IP_ADDRESS_LEN 16
+
+struct dictionary
+{
+	struct dictionary *next; // next entry in chain
+	char *queuename; // key
+	char *msg; // value 
+};
+
+struct dictionary *dict;
+
+char *lookup(char *s)
+{
+	for (dict; dict != NULL; dict = dict->next)
+		if (strcmp(s, dict->queuename) == 0)
+			return dict->msg; /* found */
+	return NULL; /* not found */
+}
 
 // Initializes WinSock2 library
 // Returns true if succeeded, false otherwise.
@@ -78,18 +96,20 @@ int main(int argc,char* argv[])
     // Main server loop
     while(1)
     {
-		strcpy(accessBuffer, "-1");
-		RecieveMessage(accessBuffer, serverSocket, iResult, sockAddrLen);
+		strcpy(accessBuffer, RecieveMessage(accessBuffer, serverSocket, iResult, sockAddrLen));
 		//Slanje poruka sa servera ka klijentu
 		if (strcmp(accessBuffer, "1"))
 		{
-
-			//SendMessage("1", "", 1, "");
+			//Skidanje sa queue-a poruke i slanje korisniku
+			//prvo primimo queue pa saljemo klijentu
+			SendMessage("1", lookup(RecieveMessage(accessBuffer, serverSocket, iResult, sockAddrLen)), 1, "");
 		}
 		//Primanje novih poruka u queue
 		else if (strcmp(accessBuffer, "2"))
 		{
-
+			//Prvo se primi queue pa se u njega upisuju podaci
+			//Prvi recieve je queue a drugi je poruka
+			//upisUDictionary(RecieveMessage(accessBuffer, serverSocket, iResult, sockAddrLen), RecieveMessage())
 		}
     }
 

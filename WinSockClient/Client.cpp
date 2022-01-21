@@ -36,18 +36,20 @@ int main(int argc,char* argv[])
 		}
 		else if (j == 2)
 		{
-			printf("Enter message from server: ");
-			// Read string from user into outgoing buffer
-			scanf("%s",outgoingBuffer);
-			fflush(stdin);
 			printf("Enter queue: ");
 			char queue[10];
 			scanf("%10s", queue);
 			fflush(stdin);
+			printf("Enter message for server: ");
+			// Read string from user into outgoing buffer
+			scanf("%s",outgoingBuffer);
+			fflush(stdin);
+			
 			/*strcat(queue, "^/");
 			strcat(outgoingBuffer, "/^");
 			strcat(outgoingBuffer, queue);*/
 
+			SendMessage(queue, queue, strlen(queue));
 			SendMessage(queue, outgoingBuffer, strlen(outgoingBuffer));
 		}
 	} 
@@ -62,7 +64,13 @@ int main(int argc,char* argv[])
 //Primanje svih poruka sa odabranog queue-a
 void Connect(char * queueName)
 {
+	//Slanje serveru queue name i primanje poruka
+	//RecieveMessage();
+}
 
+void RecieveMessage()
+{
+	//primanje poruka sa queue
 }
 
 //Slanje poruke na odabrani queue
